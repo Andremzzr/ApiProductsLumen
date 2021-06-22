@@ -18,9 +18,7 @@ class ProductController extends Controller
             $product = new \App\Models\Product();
             $product->name = $request->name;
             $product->description = $request->description;
-            $product->tags = self::stringToJson($request->tags);
-
-        
+            $product->tags = $this->stringToJson($request->tags);
             
 
          if ($product->save()) {
@@ -32,15 +30,50 @@ class ProductController extends Controller
         }    
     }
 
-    public function getName($name) {
-        $products = \App\Models\Product::where('name', $name);
-
-        return $products;
+    public function getName($productName) {
+        try{
+            $products = \App\Models\Product::all()->where('name','=',$productName);
+        
+            return $products;
+         } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
     }
+
+    public function update(Request $request, $id) {
+        try {
+            $product = \App\Models\Product::findOrFail($id);
+            $product->name = $request->title;
+            $product->description = $request->body;
+            $product->tags = self::stringToJson($request->tags);
+
+            if ($product->save()) {
+                return response()->json(['status' => 'success', 'message' => 'Product updated successfully']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+
+    public function destroy($id) {
+        try {
+            $product = \App\Models\Product::findOrFail($id);
+
+            if ($product->delete()) {
+                return response()->json(['status' => 'success', 'message' => 'Product deleted successfully']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
 
     private function stringToJson($string) {
         $string = explode(',',$string);
 
         return json_encode($string,true);
     }
+
+    
 }
