@@ -32,13 +32,19 @@ class ProductController extends Controller
 
     public function getName($productName) {
         try{
-            $products = \App\Models\Product::all()->where('name','=',$productName);
-        
+            $products = \App\Models\Product::where('name', '=', $productName)->get();
+            
+            if (count($products) == 0) {
+                return response()->json(['status' => 'error', 'message' => "There's no Product with this Name"]);
+            }
+            
             return $products;
          } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
+   
     }
+    
 
     public function update(Request $request, $id) {
         try {
@@ -55,6 +61,8 @@ class ProductController extends Controller
         }
     }
 
+
+   
 
     public function destroy($id) {
         try {

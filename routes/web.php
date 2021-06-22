@@ -18,10 +18,17 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router){
+    //GET ROUTES
     $router->get('/products', 'ProductController@index');
-    $router->get('/products/{name}', "ProductController@getName");
+    $router->get('/products/{productName}', "ProductController@getName");
+
+    //DELETE ROUTES
     $router->delete('/products/{id}', 'ProductController@destroy');
+    
+    //PUT ROUTES
     $router->put('/products/{id}', "ProductController@update");
+    
+    //POST ROUTES
     $router->post('/products', 'ProductController@create');
     
     
