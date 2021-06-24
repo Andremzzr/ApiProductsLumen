@@ -21,6 +21,7 @@ $router->group(['prefix' => 'api'], function () use ($router){
     //GET ROUTES
     $router->get('/products', 'ProductController@index');
     $router->get('/products/{productName}', "ProductController@getName");
+    $router->get('/products/tag/{tag}', "ProductController@getByTag");
 
     //DELETE ROUTES
     $router->delete('/products/{id}', 'ProductController@destroy');

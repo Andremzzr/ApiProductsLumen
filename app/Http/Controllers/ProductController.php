@@ -10,6 +10,22 @@ class ProductController extends Controller
         return response()->json(\App\Models\Product::all()) ;
     }
 
+    public function update (Request $request, $id) {
+        try {
+            $product = \App\Models\Product::findOrFail($id);
+            $product->name = $request->title;
+            $product->description = $request->body;
+            $product->tags = self::stringToJson($request->tags);
+
+            if ($product->save()) {
+                return response()->json(['status' => 'success', 'message' => 'Product updated successfully']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+
     public function create(Request $request) {
        
 
@@ -30,7 +46,12 @@ class ProductController extends Controller
         }    
     }
 
-    public function getName($productName) {
+    /**
+     * Search in the database for a Product with the respective name
+     * @param string $productName
+     * @return json 
+     */
+    public function getName(string $productName) {
         try{
             $products = \App\Models\Product::where('name', '=', $productName)->get();
             
@@ -45,21 +66,27 @@ class ProductController extends Controller
    
     }
     
-
-    public function update(Request $request, $id) {
-        try {
-            $product = \App\Models\Product::findOrFail($id);
-            $product->name = $request->title;
-            $product->description = $request->body;
-            $product->tags = self::stringToJson($request->tags);
-
-            if ($product->save()) {
-                return response()->json(['status' => 'success', 'message' => 'Product updated successfully']);
+    /**
+     * Search in the database for products with the respective tag
+     * @param string $tag
+     * @return json
+     */
+    public function getByTag(string $tag) {
+        try{
+            $products = \App\Models\Product::where('tags', '=', $tag)->get();
+            
+            if (count($products) == 0) {
+                return response()->json(['status' => 'error', 'message' => "There's no Product with this tag"]);
             }
-        } catch (\Exception $e) {
+            
+            return $products;
+         } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
+   
     }
+
+    
 
 
    
