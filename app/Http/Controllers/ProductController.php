@@ -10,13 +10,28 @@ class ProductController extends Controller
         return response()->json(\App\Models\Product::all()) ;
     }
 
-    public function update (Request $request, $id) {
+    /**
+     * Get a single Product with the informed id
+     * @param string $id
+     * @return json message
+     */
+    public function getSingle(string $id) {
+        try{
+            return response()->json(\App\Models\Product::findOrFail($id));
+        }catch(\Exception $e) {
+            return reposne()->json(['status' => "error", "message" => $e->getMessage()]);
+        }
+    }
+
+    public function update(Request $request, $id) {
         try {
             $product = \App\Models\Product::findOrFail($id);
-            $product->name = $request->title;
-            $product->description = $request->body;
+            $product->name = $request->name;
+            $product->description = $request->description;
             $product->tags = self::stringToJson($request->tags);
 
+            var_dump($request);
+            
             if ($product->save()) {
                 return response()->json(['status' => 'success', 'message' => 'Product updated successfully']);
             }

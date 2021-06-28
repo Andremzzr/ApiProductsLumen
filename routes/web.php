@@ -20,7 +20,8 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'api'], function () use ($router){
     //GET ROUTES
     $router->get('/products', 'ProductController@index');
-    $router->get('/products/{productName}', "ProductController@getName");
+    $router->get('/products/{id}', 'ProductController@getSingle');
+    $router->get('/products/name/{productName}', "ProductController@getName");
     $router->get('/products/tag/{tag}', "ProductController@getByTag");
 
     //DELETE ROUTES
