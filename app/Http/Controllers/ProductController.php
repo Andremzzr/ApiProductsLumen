@@ -90,12 +90,12 @@ class ProductController extends Controller
      */
     public function getByTag(string $tag) {
         try{
-            $products = \App\Models\Product::where('tags', '=', $tag)->get();
+            $products = \App\Models\Product::whereJsonContains('tags',$tag )->get();
             
             if (count($products) == 0) {
                 return response()->json(['status' => 'error', 'message' => "There's no Product with this tag"]);
             }
-            
+                
             return $products;
          } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
