@@ -24,14 +24,16 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id) {
+        
         try {
             $product = \App\Models\Product::findOrFail($id);
             $product->name = $request->name;
             $product->description = $request->description;
             $product->tags = self::stringToJson($request->tags);
 
-            var_dump($request);
-            
+           
+           
+
             if ($product->save()) {
                 return response()->json(['status' => 'success', 'message' => 'Product updated successfully']);
             }
