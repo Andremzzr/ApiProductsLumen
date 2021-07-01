@@ -31,6 +31,11 @@ class ProductController extends Controller
         
         try {
             $product = \App\Models\Product::findOrFail($id);
+            
+            if ($request->name == '' || $request->description == '' || $request->tags == '' ) {
+                return response()->json(['status' => 'error', 'message' => 'You need to fill all the fields']);
+
+            }
             $product->name = $request->name;
             $product->description = $request->description;
             $product->tags = self::stringToJson($request->tags);
@@ -95,7 +100,7 @@ class ProductController extends Controller
      */
     public function getByTag(string $tag) {
         try{
-            
+        
 
             if(!\Cache::has('products')){
                 \Cache::put('products',\App\Models\Product::whereJsonContains('tags',$tag )->get(), 1 );
@@ -113,10 +118,7 @@ class ProductController extends Controller
    
     }
 
-    
 
-
-   
 
     public function destroy($id) {
         try {
@@ -130,7 +132,7 @@ class ProductController extends Controller
         }
     }
     
-  
+   
 
     private function stringToJson($string) {
         $string = explode(',',$string);
