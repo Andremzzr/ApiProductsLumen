@@ -58,8 +58,8 @@ $app->singleton(
 | the default version. You may register other files below as needed.
 |
 */
+$app->configure('database');
 
-$app->configure('app');
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +95,9 @@ $app->configure('app');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class); 
+
+
 
 /*
 |--------------------------------------------------------------------------

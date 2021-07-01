@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     public function index() {
-        return response()->json(\App\Models\Product::all()) ;
+        if(!\Cache::has('products')){
+            \Cache::put('products',\App\Models\Product::all(), 1 );
+        }
+        $products = \Cache::get('products');
+        return response()->json($products) ;
     }
 
     /**
@@ -44,8 +48,6 @@ class ProductController extends Controller
 
 
     public function create(Request $request) {
-       
-
         try {
 
             $product = new \App\Models\Product();
@@ -70,8 +72,11 @@ class ProductController extends Controller
      */
     public function getName(string $productName) {
         try{
-            $products = \App\Models\Product::where('name', '=', $productName)->get();
             
+            if(!\Cache::has('products')){
+                \Cache::put('products', \App\Models\Product::where('name', '=', $productName)->get(), 1 );
+            }
+            $products = \Cache::get('products');
             if (count($products) == 0) {
                 return response()->json(['status' => 'error', 'message' => "There's no Product with this Name"]);
             }
@@ -86,16 +91,21 @@ class ProductController extends Controller
     /**
      * Search in the database for products with the respective tag
      * @param string $tag
-     * @return json
+     * @return json result
      */
     public function getByTag(string $tag) {
         try{
-            $products = \App\Models\Product::whereJsonContains('tags',$tag )->get();
+            
+
+            if(!\Cache::has('products')){
+                \Cache::put('products',\App\Models\Product::whereJsonContains('tags',$tag )->get(), 1 );
+            }
+            $products = \Cache::get('products');
             
             if (count($products) == 0) {
                 return response()->json(['status' => 'error', 'message' => "There's no Product with this tag"]);
             }
-                
+
             return $products;
          } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -119,7 +129,8 @@ class ProductController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-
+    
+  
 
     private function stringToJson($string) {
         $string = explode(',',$string);
